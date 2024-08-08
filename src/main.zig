@@ -237,14 +237,10 @@ pub fn execute(conf: ClassFile, code: []u8) !void {
                 const fieldref = conf.constant_pool[index - 1];
                 const name_of_class = try get_name_of_class(conf, fieldref.class_index);
                 const name_of_member = try get_name_of_member(conf, fieldref.name_and_type_index);
-                if (mem.eql(u8, name_of_class, "java/lang/System")) {
-                    if (mem.eql(u8, name_of_member, "out")) {
-                        try stack.append(.{ .type = "FakePrintStream", .constant = undefined, .value = 0 });
-                    } else {
-                        std.debug.panic("Unexpected class: {s}/{s}", .{ name_of_class, name_of_member });
-                    }
+                if (mem.eql(u8, name_of_class, "java/lang/System") and mem.eql(u8, name_of_member, "out")) {
+                    try stack.append(.{ .type = "FakePrintStream", .constant = undefined, .value = 0 });
                 } else {
-                    std.debug.panic("Unexpected class: {s}", .{name_of_class});
+                    std.debug.panic("Unexpected class: {s}/{s}", .{ name_of_class, name_of_member });
                 }
             },
             LDC_OPCODE => {
