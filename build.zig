@@ -19,7 +19,16 @@ pub fn build(b: *std.Build) void {
         .name = "JVM-ZIG",
         // In this case the main source file is merely a path, however, in more
         // complicated build scripts, this could be a generated file.
-        .root_source_file = b.path("src/root.zig"),
+        .root_source_file = b.path("src/class_file.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+
+    const lib2 = b.addStaticLibrary(.{
+        .name = "JVM-ZIG",
+        // In this case the main source file is merely a path, however, in more
+        // complicated build scripts, this could be a generated file.
+        .root_source_file = b.path("src/code.zig"),
         .target = target,
         .optimize = optimize,
     });
@@ -28,6 +37,7 @@ pub fn build(b: *std.Build) void {
     // location when the user invokes the "install" step (the default step when
     // running `zig build`).
     b.installArtifact(lib);
+    b.installArtifact(lib2);
 
     const exe = b.addExecutable(.{
         .name = "JVM-ZIG",
